@@ -127,6 +127,7 @@ public class Plane : MonoBehaviour {
     bool cannonFiring;
     float cannonDebounceTimer;
     float cannonFiringTimer;
+    ParticleSystem damageEffectParticles;
 
     public float MaxHealth {
         get {
@@ -198,6 +199,7 @@ public class Plane : MonoBehaviour {
     void Start() {
         animation = GetComponent<PlaneAnimation>();
         Rigidbody = GetComponent<Rigidbody>();
+        damageEffectParticles = damageEffect.GetComponent<ParticleSystem>();
 
         if (landingGear.Count > 0) {
             landingGearDefaultMaterial = landingGear[0].sharedMaterial;
@@ -245,7 +247,7 @@ public class Plane : MonoBehaviour {
         Dead = true;
         cannonFiring = false;
 
-        damageEffect.GetComponent<ParticleSystem>().Pause();
+        damageEffectParticles.Pause();
         deathEffect.SetActive(true);
     }
 
@@ -557,7 +559,7 @@ public class Plane : MonoBehaviour {
         UpdateAngularDrag();
 
         //calculate again, so that other systems can read this plane's state
-        CalculateState(dt);
+        //CalculateState(dt); // Optimization: Removed redundant call
 
         //update weapon state
         UpdateWeapons(dt);

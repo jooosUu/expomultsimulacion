@@ -13,7 +13,13 @@ public class Playerpajaro : MonoBehaviour
 
     void Update()
     {
-        if (isAlive && Input.GetMouseButtonDown(0))
+        bool controllerJump = false;
+        if (UnityEngine.InputSystem.Gamepad.current != null)
+        {
+            controllerJump = UnityEngine.InputSystem.Gamepad.current.buttonSouth.wasPressedThisFrame;
+        }
+
+        if (isAlive && (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space) || controllerJump))
         {
             Jump();
         }

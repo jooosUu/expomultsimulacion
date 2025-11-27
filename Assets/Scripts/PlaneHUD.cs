@@ -96,6 +96,21 @@ public class PlaneHUD : MonoBehaviour {
         reticleGO = reticle.gameObject;
         targetArrowGO = targetArrow.gameObject;
         missileArrowGO = missileArrow.gameObject;
+
+        TranslateHelpText();
+    }
+
+    void TranslateHelpText() {
+        foreach (var dialog in helpDialogs) {
+            var texts = dialog.GetComponentsInChildren<Text>(true);
+            foreach (var t in texts) {
+                if (t.text.Contains("Speed is in knots")) {
+                    t.text = "- La velocidad está en nudos\n- Velocidad de despegue ~130 nudos\n- Usar aerofreno con tren de aterrizaje activa frenos de rueda";
+                } else if (t.text.Contains("L Stick - Roll/Pitch")) {
+                    t.text = "Stick Izq - Alabeo/Cabeceo\nStick Der - Cámara\nGatillos - Guiñada\nBumper Der - Acelerar\nBumper Izq - Desacelerar (Mantener para Aerofreno)\nD-Pad Abajo - Flaps y tren de aterrizaje\nA - Disparar Cañón\nB - Lanzar Misil\nEspacio - Activar IA\nH - Cerrar ayuda";
+                }
+            }
+        }
     }
 
     public void SetPlane(Plane plane) {
@@ -163,21 +178,21 @@ public class PlaneHUD : MonoBehaviour {
 
     void UpdateAirspeed() {
         var speed = plane.LocalVelocity.z * metersToKnots;
-        airspeed.text = string.Format("{0:0}", speed);
+        airspeed.text = string.Format("Vel: {0:0} nudos", speed);
     }
 
     void UpdateAOA() {
-        aoaIndicator.text = string.Format("{0:0.0} Angulo", plane.AngleOfAttack * Mathf.Rad2Deg);
+        aoaIndicator.text = string.Format("Ángulo: {0:0.0}", plane.AngleOfAttack * Mathf.Rad2Deg);
     }
 
     void UpdateGForce() {
         var gforce = plane.LocalGForce.y / 9.81f;
-        gforceIndicator.text = string.Format("{0:0.0} G", gforce);
+        gforceIndicator.text = string.Format("Fuerza G: {0:0.0}", gforce);
     }
 
     void UpdateAltitude() {
         var altitude = plane.Rigidbody.position.y * metersToFeet;
-        this.altitude.text = string.Format("{0:0}", altitude);
+        this.altitude.text = string.Format("Alt: {0:0} pies", altitude);
     }
 
     Vector3 TransformToHUDSpace(Vector3 worldSpace) {
@@ -242,7 +257,7 @@ public class PlaneHUD : MonoBehaviour {
         }
 
         targetName.text = plane.Target.Name;
-        targetRange.text = string.Format("{0:0 m}", targetDistance);
+        targetRange.text = string.Format("Dist: {0:0} m", targetDistance);
 
         //update target arrow
         var targetDir = (plane.Target.Position - plane.Rigidbody.position).normalized;
@@ -333,17 +348,17 @@ public class PlaneHUD : MonoBehaviour {
             aiMessage.SetActive(aiController.enabled);
         }
 
-        UpdateAirspeed();
-        UpdateAltitude();
-        UpdateHealth();
-        UpdateWeapons();
-        UpdateWarnings();
-
         //update these elements at reduced rate to make reading them easier
         if (Time.time > lastUpdateTime + (1f / updateRate)) {
+            UpdateAirspeed();
+            UpdateAltitude();
+            UpdateHealth();
             UpdateAOA();
             UpdateGForce();
             lastUpdateTime = Time.time;
         }
+
+        UpdateWeapons();
+        UpdateWarnings();
     }
 }

@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Windows;
 
 public class AIController : MonoBehaviour {
     [SerializeField]
@@ -323,14 +322,14 @@ public class AIController : MonoBehaviour {
         var dt = Time.fixedDeltaTime;
 
         Vector3 steering = Vector3.zero;
-        float throttle;
+        float throttle = 0f;
         bool emergency = false;
-        Vector3 targetPosition = plane.Target.Position;
+        Vector3 targetPosition = plane.Target != null ? plane.Target.Position : plane.Rigidbody.position;
 
         var velocityRot = Quaternion.LookRotation(plane.Rigidbody.linearVelocity.normalized);
         var ray = new Ray(plane.Rigidbody.position, velocityRot * Quaternion.Euler(groundAvoidanceAngle, 0, 0) * Vector3.forward);
 
-        if (Physics.Raycast(ray, groundCollisionDistance + plane.LocalVelocity.z, groundCollisionMask.value)) {
+        if (Physics.Raycast(ray, groundCollisionDistance + plane.LocalVelocity.z, groundCollisionMask)) {
             steering = AvoidGround();
             throttle = CalculateThrottle(groundAvoidanceMinSpeed, groundAvoidanceMaxSpeed);
             emergency = true;
@@ -349,7 +348,9 @@ public class AIController : MonoBehaviour {
                 emergency = true;
             } else {
                 dodging = false;
-                targetPosition = GetTargetPosition();
+                if (plane.Target != null) {
+                    targetPosition = GetTargetPosition();
+                }
             }
 
             if (incomingMissile == null && (plane.LocalVelocity.z < recoverSpeedMin || isRecoveringSpeed)) {
@@ -378,7 +379,7 @@ public class AIController : MonoBehaviour {
 
             plane.SetControlInput(steering);
         } else {
-            SteerToTarget(dt, plane.Target.Position);
+            SteerToTarget(dt, plane.Target != null ? plane.Target.Position : plane.Rigidbody.position);
         }
 
         CalculateWeapons(dt);

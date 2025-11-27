@@ -108,6 +108,26 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("Windowsescritorio"); // ← Cambia este nombre si tu escena se llama diferente
     }
 
+    void Update()
+    {
+        if (!isPlaying)
+        {
+            if (UnityEngine.InputSystem.Gamepad.current != null)
+            {
+                // Botón Sur (A/B) para Reiniciar
+                if (UnityEngine.InputSystem.Gamepad.current.buttonSouth.wasPressedThisFrame)
+                {
+                    RestartGame();
+                }
+                // Botón Este (B/A) para Volver al Menú
+                if (UnityEngine.InputSystem.Gamepad.current.buttonEast.wasPressedThisFrame)
+                {
+                    BackToMenu();
+                }
+            }
+        }
+    }
+
     public void RestartGame()
     {
         Time.timeScale = 1f;

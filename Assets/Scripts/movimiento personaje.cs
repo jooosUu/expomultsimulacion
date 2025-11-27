@@ -50,6 +50,17 @@ public class PlayerMovement2D : MonoBehaviour
         
         // Obtener input vertical (W/S o flechas arriba/abajo)
         float verticalInput = Input.GetAxisRaw("Vertical");
+
+        // Soporte para Gamepad (New Input System)
+        if (UnityEngine.InputSystem.Gamepad.current != null)
+        {
+            Vector2 gamepadInput = UnityEngine.InputSystem.Gamepad.current.leftStick.ReadValue();
+            if (gamepadInput.magnitude > 0.1f)
+            {
+                horizontalInput = gamepadInput.x;
+                verticalInput = gamepadInput.y;
+            }
+        }
         
         // Normalizar el vector para movimiento diagonal consistente
         movement = new Vector2(horizontalInput, verticalInput).normalized;

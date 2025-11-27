@@ -23,8 +23,16 @@ public class InteractionTrigger : MonoBehaviour
 
     void Update()
     {
-        // Si el jugador está en rango y presiona E
-        if (playerInRange && Input.GetKeyDown(interactionKey))
+        // Si el jugador está en rango y presiona E o botón del control
+        bool controllerInteract = false;
+        if (UnityEngine.InputSystem.Gamepad.current != null)
+        {
+            // Botón Sur (A en Xbox, B en Switch) o Oeste (X en Xbox, Y en Switch)
+            controllerInteract = UnityEngine.InputSystem.Gamepad.current.buttonSouth.wasPressedThisFrame || 
+                                 UnityEngine.InputSystem.Gamepad.current.buttonWest.wasPressedThisFrame;
+        }
+
+        if (playerInRange && (Input.GetKeyDown(interactionKey) || controllerInteract))
         {
             LoadScene();
         }

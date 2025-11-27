@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class Playerpajaro : MonoBehaviour
 {
     public float jumpForce = 5f;
     private Rigidbody2D rb;
